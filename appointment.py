@@ -2,6 +2,7 @@ from Tkinter import *
 import tkMessageBox
 import pymysql
 
+
 conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
 cur = conn.cursor()
 
@@ -59,23 +60,32 @@ def searchAppointment():
 	saFrame = Frame(sa)
 	saFrame.pack()
 
-	vAid = StringVar()
-	lAid = Label(saFrame, text="Appointment ID")
+	lAid = Label(saFrame, text="Appointment Number")
 	lAid.grid(column=0, row=0)
-	eAid = Entry(saFrame, textvariable=vAid)
+	eAid = Entry(saFrame)
 	eAid.grid(column=1, row=0)
 
-	bSearch = Button(saFrame, text="Search", command=doSearchAppointment)
+	bSearch = Button(saFrame, text="Search", command=lambda:doSearchAppointment(eAid.get()))
 	bSearch.grid(columnspan=2, column=0, row=1)
 	return
 
-def doSearchAppointment():
-	# print(aid)
-	cur.execute("SELECT * FROM Appointment WHERE appointment_sn='1111'")
-	# if not cur.fetchone():
-	# 	print("Not found!")
-	for row in cur:
-		print(row)
+def doSearchAppointment(aid):
+	print(aid)
+	if not cur.execute("SELECT * FROM Appointment WHERE appointment_sn="+"'"+aid+"'"):
+		print("Not found!")
+	else:
+		data=[('Appointment Number', 'Doctor SSN', 'Patient SSN', 'Symptom', 'Date', 'Notes')]
+
+		for row in cur:
+			data.append(row)
+		r=0
+		for row in data:
+			print(row)
+			c=0
+			for col in row:
+				Label(infoFrame, text=col, width=20, anchor=W).grid(row=r, column=c)
+				c=c+1
+			r=r+1
 	return
 
 
@@ -90,28 +100,28 @@ def showInfo():
 root = Tk()
 
 bottonFrame = Frame(root)
-bottonFrame.grid(row=0,column=0)
+bottonFrame.pack(fill=BOTH, side=LEFT)
 
-infoFrame = Frame(root, width=500, height=500,bg="white")
-infoFrame.grid(row=0,column=1)
+infoFrame = Frame(root, width=900, height=900, bd=5)
+infoFrame.pack(fill=BOTH, side=LEFT)
 
 bMakeAppointment = Button(bottonFrame, text="Make an appointment", width=20, command=makeAppointment)
-bMakeAppointment.grid(row=0, column=0)
+bMakeAppointment.grid(row=0, column=0, padx=5, pady=5)
 
 bSearchAppointment = Button(bottonFrame, text="Search an appointment", width=20, command=searchAppointment)
-bSearchAppointment.grid(row=1, column=0)
+bSearchAppointment.grid(row=1, column=0, padx=5, pady=5)
 
 bFindDoc = Button(bottonFrame, text="Search a doctor", width=20, command=showInfo)
-bFindDoc.grid(row=2, column=0)
+bFindDoc.grid(row=2, column=0, padx=5, pady=5)
 
 bFindPatient = Button(bottonFrame, text="Search a patient", width=20)
-bFindPatient.grid(row=3, column=0)
+bFindPatient.grid(row=3, column=0, padx=5, pady=5)
 
 bFindMedicine = Button(bottonFrame, text="Search a medicine", width=20)
-bFindMedicine.grid(row=4, column=0)
+bFindMedicine.grid(row=4, column=0, padx=5, pady=5)
 
 bFindPayment = Button(bottonFrame, text="Search a payment", width=20)
-bFindPayment.grid(row=5, column=0)
+bFindPayment.grid(row=5, column=0, padx=5, pady=5)
 
 
 root.mainloop()
