@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<p> Please input Doctor's email or Doctor's license number that you want to look at </p>
+<form action="finding_doctor" method="POST">
+	<input type="text" name="search_string">
+	<select name="type_of_search">
+        <option value="email">Email</option>
+        <option value="doctor_license_number">Doctor License Number</option>        
+    </select>
+	<input type="submit" name="my-form" value="Search">
+</form>
+
+{% if not_found %}
+
+	<p> {{not_found}} </p>
+
+{% elif data %}
+	<p> Doctor's license number: {{data[1]}} </p>
+	<p> Doctor's first name: {{data[2]}} </p>
+	<p> Doctor's last name: {{data[3]}} </p>
+	<p> Doctor's email: {{data[5]}}
+	<p> Doctor's age: {{data[4]}} </p>
+	<p> Doctor's phone number: {{data[10]}} </p>
+	<p> Doctor's birth_date: {{data[11]}} </p>
+	<p> Doctor's address: {{data[6]}} {{data[7]}} {{data[8]}} {{data[9]}} </p> 
+{% endif %}
+
+{% endblock %}

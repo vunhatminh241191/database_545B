@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<p> Please input Medicine information, you want to look at </p>
+<form action="finding_medicine" method="POST">
+	<p>Medicine's name: <input type="text" name="medicine_name"></p>
+	<p>Medicine's shape: <select name="type_of_medicine_shape">
+        <option value="oval">Oval</option>
+        <option value="rectangle">Rectangle</option>
+        <option value="capsule">Capsult</option>
+        <option value="circle">Circle</option> 
+    </select></p>
+	<p>Medicine's company: <input type="text" name="medicine_company"></p>
+	<input type="submit" name="my-form" value="Search">
+</form>
+
+{% if not_found %}
+
+	<p> {{not_found}} </p>
+
+{% elif data %}
+	<p> Medicine's name: {{data[0]}} </p>
+	<p> Medicine's shape: {{data[1]}} </p>
+	<p> Medicine's producer: {{data[2]}} </p>
+	<p> Medicine's functionality: {{data[3]}} </p>
+	<p> Medicine's total quantity: {{data[4]}} </p>
+	<p> Medicine's total using: {{data[5]}} </p>
+{% endif %}
+
+{% endblock %}
