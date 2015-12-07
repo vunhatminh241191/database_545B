@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<p> Please tell us your problem </p>
+<form action="create_appointment" method="POST">
+	<p>Patient's SSN <input type="text" name="patient_ssn"></p>
+	<p>Symptoms <input type="text" name="symptoms"></p>
+	<input type="submit" name="my-form" value="Making new appointment">
+</form>
+
+{% if data %}
+	{{data}}
+{% endif %}
+
+{% endblock %}

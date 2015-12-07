@@ -6,6 +6,6 @@ import MySQLdb
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 db = MySQLdb.connect("localhost", "minhvu", "", "FinalProject")
-
+SECRET_KEY = 'you-will-never-guess'
 
 from . import pages

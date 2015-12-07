@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<a href="{{ url_for('making_new_appointment') }}"><button>Making New Appointment</button></a>
-<a href="{{ url_for('appointment') }}"><button>Search Appointmnet</button></a>
-<a href="{{ url_for('doctor') }}"><button>Search Doctor</button></a>
-<a href="{{ url_for('patient') }}"><button>Search Patient</button></a>
-<a href="{{ url_for('payment') }}"><button>Search Payment</button></a>
-<a href="{{ url_for('medicine') }}"><button>Search Medicine</button></a>
+<p> <a href="{{ url_for('making_new_appointment') }}"><button>Making New Appointment</button></a></p>
+<p> <a href="{{ url_for('creating_new_account') }}"><button>Create Account</button></a></p>
+<p> <a href="{{ url_for('appointment') }}"><button>Search Appointmnet</button></a></p>
+<p> <a href="{{ url_for('doctor') }}"><button>Search Doctor</button></a></p>
+<p> <a href="{{ url_for('patient') }}"><button>Search Patient</button></a></p>
+<p> <a href="{{ url_for('payment') }}"><button>Search Payment</button></a></p>
+<p> <a href="{{ url_for('medicine') }}"><button>Search Medicine</button></a></p>
 {% endblock %}
 
 
