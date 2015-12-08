@@ -62,16 +62,16 @@ def searchAppointment():
 	vAid = StringVar()
 	lAid = Label(saFrame, text="Appointment ID")
 	lAid.grid(column=0, row=0)
-	eAid = Entry(saFrame, textvariable=vAid)
+	eAid = Entry(saFrame)
 	eAid.grid(column=1, row=0)
 
-	bSearch = Button(saFrame, text="Search", command=doSearchAppointment)
+	bSearch = Button(saFrame, text="Search", command=lambda: doSearchAppointment(eAid.get()))
 	bSearch.grid(columnspan=2, column=0, row=1)
 	return
 
-def doSearchAppointment():
+def doSearchAppointment(id_get):
 	# print(aid)
-	cur.execute("SELECT * FROM Appointment WHERE appointment_sn='1111'")
+	cur.execute("SELECT * FROM Appointment WHERE appointment_sn=id_get")
 	# if not cur.fetchone():
 	# 	print("Not found!")
 	for row in cur:
