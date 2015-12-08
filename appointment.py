@@ -157,11 +157,17 @@ class Appointment:
 		conn.close()
 		return
 
+	def msgErr(self, errcode):
+		errdic = {1: "Not Found!", 2: "Already Existed!", 3:"Input Error!"}
+		tkMessageBox.showinfo("Error", errdic[errcode])
+		return
+
+
 	def searchAppointment(self):
 		self.clearInfoFrame()
 		fSAInput = Frame(self.infoFrame, width=890, height=50)
 		fSAInput.pack(fill=BOTH, side=TOP)
-		fSAResult = Frame(self.infoFrame, width=890, height=640, bg="white")
+		fSAResult = Frame(self.infoFrame, width=890, height=640)
 		fSAResult.pack(fill=NONE, side=TOP)
 
 		lAid = Label(fSAInput, text="Appointment SSN").pack(fill=BOTH, side=LEFT)
@@ -171,20 +177,146 @@ class Appointment:
 
 		return
 
-	def msgErr(self, errcode):
-		errdic = {1: "Not Found!", 2: "Already Existed!", 3:"Input Error!"}
-		tkMessageBox.showinfo("Error", errdic[errcode])
-		return
-
 	def doSearchAppointment(self, fSAResult, aid):
 		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
 		cur = conn.cursor()
 		print(aid)
+		lasrow=0
 		if not cur.execute("SELECT * FROM Appointment WHERE appointment_sn="+"'"+aid+"'"):
 			self.msgErr(1)
 		else:
-			data=[('Appointment Number', 'Doctor SSN', 'Patient SSN', 'Symptom', 'Date', 'Notes')]
-			colWid=[20, 10, 10, 20, 10, 40]
+			data=['Appointment Number', 'Doctor SSN', 'Patient SSN', 'Symptom', 'Date', 'Notes']
+			for row in cur:
+				c=0
+				for col in row:
+					print(col)
+					print(data[c])
+					Label(fSAResult, text=data[c], width=20, anchor=W).grid(row=c, column=0)
+					Label(fSAResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
+					c=c+1
+				lastrow=c-1
+
+		cur.close()
+
+		self.doSearchMedicineByAppointment(fSAResult, aid, lastrow)
+		return
+
+	def doSearchMedicineByAppointment(self, fSAResult, aid, lastrow):
+		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		cur = conn.cursor()
+		print(aid)
+		if not cur.execute("SELECT * FROM Appointment_medicine WHERE appointment_sn="+"'"+aid+"'"):
+			self.msgErr(1)
+		else:
+			data=['Medicine Name', 'Shape', 'Producer', 'Functionality', 'Unit Per Time', 'Total Unit']
+			for row in cur:
+				c=0
+				for col in row:
+					print(col)
+					print(data[c])
+					Label(fSAResult, text=data[c], width=20, anchor=W).grid(row=lastrow+c, column=0)
+					Label(fSAResult, text=str(col), width=30, anchor=W).grid(row=lastrow+c, column=1)
+					c=c+1
+		cur.close()
+		return
+
+	def searchPatient(self):
+		self.clearInfoFrame()
+		fSPInput = Frame(self.infoFrame, width=890, height=50)
+		fSPInput.pack(fill=BOTH)
+		fSPResult = Frame(self.infoFrame, width=890, height=640)
+		fSPResult.pack(fill=BOTH)
+
+		lPatientSSN = Label(fSPInput, text="Patient SSN").pack(fill=BOTH, side=LEFT)
+		ePatientSSN = Entry(fSPInput)
+		ePatientSSN.pack(fill=BOTH, side=LEFT)
+		bSearch = Button(fSPInput, text="Search", command=lambda: self.doSearchPatient(fSPResult, ePatientSSN.get())).pack(fill=BOTH, side=LEFT)
+		
+		return
+
+	def doSearchPatient(self, fSPResult, data):
+		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		cur = conn.cursor()
+		print(data)
+		if not cur.execute("SELECT * FROM Patient WHERE patient_ssn="+"'"+data+"'") or not cur.execute("SELECT * FROM USER WHERE ssn="+"'"+data+"'"):
+			self.msgErr(1)
+		else:
+
+			data=['SSN', 'First Name', 'Last Name', 'Age', 'Email', 'Address', 'City', 'State', 'ZIP Code', 'Phone', 'Birthday', 'Addition Info']
+			for row in cur:
+				c=0
+				for col in row:
+					print(col)
+					print(data[c])
+					Label(fSPResult, text=data[c], width=15, anchor=W).grid(row=c, column=0)
+					Label(fSPResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
+					c=c+1
+		cur.close()
+		return
+
+	def searchDoctor(self):
+		self.clearInfoFrame()
+		fSDInput = Frame(self.infoFrame, width=890, height=50)
+		fSDInput.pack(fill=BOTH)
+		fSDResult = Frame(self.infoFrame, width=890, height=640)
+		fSDResult.pack(fill=BOTH)
+
+		lDoctorSSN = Label(fSDInput, text="Doctor SSN").pack(fill=BOTH, side=LEFT)
+		eDoctorSSN = Entry(fSDInput)
+		eDoctorSSN.pack(fill=BOTH, side=LEFT)
+		bSearch = Button(fSDInput, text="Search", command=lambda: self.doSearchDoctor(fSDResult, eDoctorSSN.get())).pack(fill=BOTH, side=LEFT)
+		
+		return
+
+	def doSearchDoctor(self, fSDResult, data):
+		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		cur = conn.cursor()
+		print(data)
+		if not cur.execute("SELECT * FROM Doctor WHERE doctor_ssn="+"'"+data+"'") or not cur.execute("SELECT * FROM USER WHERE ssn="+"'"+data+"'"):
+			self.msgErr(1)
+		else:
+
+			data=['SSN', 'First Name', 'Last Name', 'Age', 'Email', 'Address', 'City', 'State', 'ZIP Code', 'Phone', 'Birthday', 'Addition Info']
+			for row in cur:
+				c=0
+				for col in row:
+					print(col)
+					print(data[c])
+					Label(fSDResult, text=data[c], width=15, anchor=W).grid(row=c, column=0)
+					Label(fSDResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
+					c=c+1
+		cur.close()
+		return
+
+	def searchMedicine(self):
+		self.clearInfoFrame()
+		fSMInput = Frame(self.infoFrame, width=890, height=50)
+		fSMInput.pack(fill=BOTH, side=TOP)
+		fSMResult = Frame(self.infoFrame, width=890, height=640)
+		fSMResult.pack(fill=NONE, side=TOP)
+
+		lName = Label(fSMInput, text="Medicine Name").pack(fill=BOTH, side=LEFT)
+		eName = Entry(fSMInput)
+		eName.pack(fill=BOTH, side=LEFT)
+		bSearch = Button(fSMInput, text="Search", command=lambda: self.doSearchMedicine(fSMResult, eName.get())).pack(fill=BOTH, side=LEFT)
+
+		return
+
+	def doSearchMedicine(self, fSAResult, name):
+		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		cur = conn.cursor()
+		print(name)
+		if not name:
+			command = "SELECT * FROM Medicine"
+		else:
+			command = "SELECT * FROM Medicine WHERE medicine_name='%s'"%name
+		
+		print(command)
+		if not cur.execute(command):
+			self.msgErr(1)
+		else:
+			data=[('Name', 'Shape', 'Producer', 'Functionality', 'Quanlity Having', 'Quanlity Using')]
+			colWid=[20, 10, 10, 20, 20, 20]
 			for row in cur:
 				data.append(row)
 			r=0
@@ -192,45 +324,46 @@ class Appointment:
 				print(row)
 				c=0
 				for col in row:
-					Label(fSAResult, text=str(col), width=colWid[c], wraplength=300, anchor=W).grid(row=r, column=c)
+					Label(fSAResult, text=str(col), width=colWid[c], anchor=W).grid(row=r, column=c)
 					c=c+1
 				r=r+1
 		cur.close()
 		return
 
-
-	def showInfo(self):
-		fInfo = Frame(self.infoFrame, width=500, height=500, bg="yellow")
-		fInfo.grid(column=0, row=0)
-		lInfo = Label(fInfo, text="let's rock the world!")
-		lInfo.grid(column=0, row=0)
-		return
-
-	def searchPatient(self):
+	def searchPayment(self):
 		self.clearInfoFrame()
 		fSPInput = Frame(self.infoFrame, width=890, height=50)
 		fSPInput.pack(fill=BOTH)
-		fSPResult = Frame(self.infoFrame, width=890, height=640, bg="white")
+		fSPResult = Frame(self.infoFrame, width=890, height=640)
 		fSPResult.pack(fill=BOTH)
 
-		lPatientSSN = Label(fSPInput, text="Patient SSN").pack(fill=BOTH, side=LEFT)
-		ePatientSSN = Entry(fSPInput)
-		ePatientSSN.pack(fill=BOTH, side=LEFT)
-		bSearch = Button(fSPInput, text="Search", command=lambda: self.doSearchPatient(ePatientSSN.get())).pack(fill=BOTH, side=LEFT)
+		lAsn = Label(fSPInput, text="Appointment SN").pack(fill=BOTH, side=LEFT)
+		eAsn = Entry(fSPInput)
+		eAsn.pack(fill=BOTH, side=LEFT)
+		bSearch = Button(fSPInput, text="Search", command=lambda: self.doSearchPatient(fSPResult, eAsn.get())).pack(fill=BOTH, side=LEFT)
 		
 		return
 
-	def doSearchPatient(self, data):
+	def doSearchPatient(self, fSPResult, data):
 		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
 		cur = conn.cursor()
 		print(data)
-		if not cur.execute("SELECT * FROM USER WHERE ssn="+"'"+data+"'"):
+		if not cur.execute("SELECT * FROM Appointment WHERE appointment_sn="+"'"+data+"'") or not cur.execute("SELECT * FROM Payment WHERE appointment_sn="+"'"+data+"'"):
 			self.msgErr(1)
 		else:
+
+			data=['Appointment SN', 'Method', 'Amount', 'Date']
 			for row in cur:
-				print(row)
+				c=0
+				for col in row:
+					print(col)
+					print(data[c])
+					Label(fSPResult, text=data[c], width=15, anchor=W).grid(row=c, column=0)
+					Label(fSPResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
+					c=c+1
 		cur.close()
 		return
+
 
 	def __init__(self):
 		root = Tk()
@@ -247,18 +380,17 @@ class Appointment:
 		bSearchAppointment = Button(bottonFrame, text="Search an appointment", width=20, command=self.searchAppointment)
 		bSearchAppointment.grid(row=1, column=0, padx=5, pady=5)
 
-		bFindDoc = Button(bottonFrame, text="Search a doctor", width=20)
+		bFindDoc = Button(bottonFrame, text="Search a doctor", width=20, command=self.searchDoctor)
 		bFindDoc.grid(row=2, column=0, padx=5, pady=5)
 
 		bFindPatient = Button(bottonFrame, text="Search a patient", width=20, command=self.searchPatient)
 		bFindPatient.grid(row=3, column=0, padx=5, pady=5)
 
-		bFindMedicine = Button(bottonFrame, text="Search a medicine", width=20)
+		bFindMedicine = Button(bottonFrame, text="Search a medicine", width=20, command=self.searchMedicine)
 		bFindMedicine.grid(row=4, column=0, padx=5, pady=5)
 
-		bFindPayment = Button(bottonFrame, text="Search a payment", width=20)
+		bFindPayment = Button(bottonFrame, text="Search a payment", width=20, command=self.searchPayment)
 		bFindPayment.grid(row=5, column=0, padx=5, pady=5)
-
 
 		root.mainloop()
 
