@@ -47,6 +47,9 @@ def adding_account():
 		cursor.execute("""INSERT INTO User VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, null)""", (str(ssn)
 			, str(first_name), str(last_name), str(age), str(email), str(address)
 			, str(city), str(state), str(zipcode), str(phone), str(date_of_birth)))
+
+		cursor.execute("""INSERT INTO Patient VALUES (%s)""", (str(ssn), ))
+
 		db.commit()
 		return render_template('new_account.html', data_return=[ssn
 			, first_name, last_name, age, email, address, city, state, zipcode, phone, date_of_birth])
