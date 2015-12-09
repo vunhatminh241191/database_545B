@@ -24,8 +24,8 @@ class Appointment:
 				print("new appointment_sn is %d"%sn)
 			now = datetime.datetime.now()
 			date = "%d-%d-%d"%(now.year,now.month,now.day)
-			print("INSERT INTO Appointment VALUES ('%d', '100000008', '%s', '%s', '%s', '');"%(sn, data[0], data[1], date))
-			cur.execute("INSERT INTO Appointment VALUES ('%d', '100000008', '%s', '%s', '%s', '');"%(sn, data[0], data[1], date))
+			print("INSERT INTO Appointment VALUES ('%d', NULL, '%s', '%s', '%s', '');"%(sn, data[0], data[1], date))
+			cur.execute("INSERT INTO Appointment VALUES ('%d', NULL, '%s', '%s', '%s', '');"%(sn, data[0], data[1], date))
 			conn.commit()
 			tkMessageBox.showinfo("^_^","Success! Appointment SN is %d"%(sn))
 			self.clearInfoFrame()
@@ -158,7 +158,7 @@ class Appointment:
 		return
 
 	def msgErr(self, errcode):
-		errdic = {1: "Not Found!", 2: "Already Existed!", 3:"Input Error!"}
+		errdic = {1: "Not Found!", 2: "Already Existed!", 3:"Input Error!", 4:"Operation Failed!"}
 		tkMessageBox.showinfo("Error", errdic[errcode])
 		return
 
@@ -196,9 +196,9 @@ class Appointment:
 					c=c+1
 				lastrow=c-1
 
-		cur.close()
 
 		self.doSearchMedicineByAppointment(fSAResult, aid, lastrow)
+		conn.close()
 		return
 
 	def doSearchMedicineByAppointment(self, fSAResult, aid, lastrow):
@@ -206,18 +206,135 @@ class Appointment:
 		cur = conn.cursor()
 		print(aid)
 		if not cur.execute("SELECT * FROM Appointment_medicine WHERE appointment_sn="+"'"+aid+"'"):
-			self.msgErr(1)
+			# self.msgErr(1)
+			print("No medicine yet!")
 		else:
 			data=['Medicine Name', 'Shape', 'Producer', 'Functionality', 'Unit Per Time', 'Total Unit']
 			for row in cur:
 				c=0
+				# remove appointment sn from row
+				row = [x for x in row]
+				del row[0]
+				print(row)
+				print(data)
 				for col in row:
-					print(col)
-					print(data[c])
 					Label(fSAResult, text=data[c], width=20, anchor=W).grid(row=lastrow+c, column=0)
 					Label(fSAResult, text=str(col), width=30, anchor=W).grid(row=lastrow+c, column=1)
 					c=c+1
-		cur.close()
+		bUpdate = Button(fSAResult, text="Update", anchor=E, command=lambda: self.updateAppointment(fSAResult, aid)).grid(row=12, column=0)
+		bDelete = Button(fSAResult, text="Delete", anchor=W, command=lambda: self.doDelAppointment(aid)).grid(row=12, column=1)
+		conn.close()
+		return
+
+	def doDelAppointment(self, aid):
+		print(aid)
+		self.clearInfoFrame()
+		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		cur = conn.cursor()
+		try:
+			cur.execute("SELECT * FROM Appointment WHERE appointment_sn="+aid)
+			appointment=[]
+			for row in cur:
+				appointment = [x for x in row]
+			print(appointment)
+			
+			if appointment[1] is None:
+				cur.execute("DELETE FROM Appointment WHERE appointment_sn='"+aid+"';")
+			conn.commit()
+			conn.close()
+		except:
+			self.msgErr(4)
+		self.searchAppointment()
+		return
+
+	def updateAppointment(self, fSAResult, aid):
+		self.clearInfoFrame()
+		fSAResult = Frame(self.infoFrame)
+		fSAResult.pack(fill=NONE, side=TOP)
+		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		cur = conn.cursor()
+		cur1 = conn.cursor()
+		print(aid)
+		lasrow=0
+		inputEntry=[]
+		oldAppointment=[]
+		oldAMedicine=[]
+		if not cur.execute("SELECT * FROM Appointment WHERE appointment_sn="+"'"+aid+"'"):
+			self.msgErr(1)
+		else:
+			print("123123123123")
+			data=['Appointment Number', 'Doctor SSN', 'Patient SSN', 'Date']
+			entryName = ['Symptom', 'Notes', 'Medicine', 'Shape', 'Producer', 'Unit Per Time', 'Total']
+			entryRow=[]
+			c=0
+
+			for row in cur:
+				row = [x for x in row]
+				oldAppointment = [x for x in row]
+				print(row)
+				entryRow.append(row[3])
+				entryRow.append(row[5])
+				del row[5]
+				del row[3]
+
+				for col in row:
+					print("%s %s"%(data[c], col))
+					Label(fSAResult, text=data[c], width=20, anchor=W).grid(row=c, column=0)
+					Label(fSAResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
+					c=c+1
+			print(entryName)
+			for col in entryName:
+				print(c)
+				Label(fSAResult, text=col, width=20, anchor=W).grid(row=c, column=0)
+				input = Entry(fSAResult, width=30)
+				input.grid(row=c, column=1)
+				inputEntry.append(input)
+				c=c+1
+
+			if cur1.execute("SELECT * FROM Appointment_medicine WHERE appointment_sn="+"'"+aid+"'"):
+				for row in cur1:
+					row = [x for x in row]
+					oldAMedicine=[x for x in row]
+					print(row)
+					del row[0]
+					for x in row:
+						entryRow.append(x)
+				c=0
+				for col in entryRow:
+					inputEntry[c].insert(0, str(col))
+					c=c+1
+
+				
+
+			bUpdate = Button(fSAResult, text="Update", anchor=E, command=lambda: self.doUpdateAppointment(aid, oldAppointment, oldAMedicine, [x.get() for x in inputEntry])).grid(row=20, column=0)
+			return
+
+	def doUpdateAppointment(self, aid, oldAppointment, oldAMedicine, data):		
+		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		cur = conn.cursor()
+
+		print(oldAMedicine)
+		print(oldAppointment)
+		cur.execute("SELECT * from Medicine where medicine_name=%s and shape=%s and producer=%s"
+			, (data[2], data[3], data[4]))
+		medicine_info = cur.fetchone()
+		if medicine_info == None:
+			self.msgErr(1)
+		AppointmentCommand="UPDATE Appointment set symptoms=\'%s\', notes=\'%s\' where appointment_sn=\'%s\'"%(data[0], data[1], str(aid))
+		AMedicineCommand="UPDATE Appointment_medicine set medicine_name=\'%s\', shape=\'%s\', producer=\'%s\', unit_per_time=\'%s\', total_unit=\'%s\' where appointment_sn=\'%s\'"%(data[2], data[3], data[4], data[5], str(data[6]), str(aid))
+		print(AppointmentCommand)
+		print(AMedicineCommand)
+
+		
+		
+		cur.execute(AppointmentCommand)
+		conn.commit()
+		cur.execute(AMedicineCommand)
+		conn.commit()
+		conn.close()
+
+		# self.doSearchMedicineByAppointment(fSAResult, aid, lastrow)
+		
 		return
 
 	def searchPatient(self):
@@ -251,7 +368,7 @@ class Appointment:
 					Label(fSPResult, text=data[c], width=15, anchor=W).grid(row=c, column=0)
 					Label(fSPResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
 					c=c+1
-		cur.close()
+		conn.close()
 		return
 
 	def searchDoctor(self):
@@ -285,7 +402,7 @@ class Appointment:
 					Label(fSDResult, text=data[c], width=15, anchor=W).grid(row=c, column=0)
 					Label(fSDResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
 					c=c+1
-		cur.close()
+		conn.close()
 		return
 
 	def searchMedicine(self):
@@ -327,7 +444,7 @@ class Appointment:
 					Label(fSAResult, text=str(col), width=colWid[c], anchor=W).grid(row=r, column=c)
 					c=c+1
 				r=r+1
-		cur.close()
+		conn.close()
 		return
 
 	def searchPayment(self):
@@ -361,7 +478,7 @@ class Appointment:
 					Label(fSPResult, text=data[c], width=15, anchor=W).grid(row=c, column=0)
 					Label(fSPResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
 					c=c+1
-		cur.close()
+		conn.close()
 		return
 
 
