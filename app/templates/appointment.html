@@ -19,6 +19,8 @@
 	<p> Symptoms: {{data[3]}} </p>
 	<p> Date: {{data[4]}} </p>
 	<p> Note: {{data[5]}} </p>
+
+	<p> <a href="{{ url_for('showing_appointment_update_info', appointment=data[0]) }}"><button>Update Appointmnet</button></a></p>
 {% endif %}
 
 {% endblock %}

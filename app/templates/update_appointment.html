@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<p> Please input Appointment's Number that you want to look at </p>
+<form action="update_appointment" method="POST">
+		<input type="text" name="Symptoms", value="{{data[1]}}">
+		<input type="submit" name="my-form" value="Update">
+</form>
+
+
+{% endblock %}
