@@ -15,13 +15,9 @@ def appointment():
 @app.route("/finding_appointment", methods=['GET', 'POST'])
 def finding_appointment():
 	if request.method == "POST":
-		cursor = db.cursor()
-		payment_id = request.form['text']
-		cursor.execute("SELECT * from Appointment where appointment_sn=" + "'" + payment_id + "'")
-		data = cursor.fetchone()
-		if data is None:
-			return render_template('appointment.html', not_found='This appointment does not exist')
-		return render_template('appointment.html', data=data)
+		appointment = request.form['text']
+		data = getting_all_appointment_info(appointment)
+		return render_template('showing_appointment.html', data=data)
 	if request.method == 'GET':
 		return render_template('appointment.html')
 
@@ -69,32 +65,43 @@ def delete_appointment():
 			db.commit()
 			return render_template('delete_appointment.html', data="We apologizes when we could not help you. Hope you will get well sone!!!")
 
-@app.route("/showing_appointment_update_info/<appointment>", methods=['GET', 'POST'])
-def showing_appointment_update_info(appointment):
+@app.route("/showing_appointment_update_info/<appointment>/<set_value>", methods=['GET', 'POST'])
+def showing_appointment_update_info(appointment, set_value):
 	if request.method == 'GET':
-		cursor = db.cursor()
-
-		# appointment information
-		cursor.execute("SELECT * from Appointment where appointment_sn=(%s)", (appointment, ))
-		appointment_info = cursor.fetchone()
-
-		# medicine of appointment information
-		cursor.execute("SELECT * from Appointment_medicine where appointment_sn=(%s)", (appointment, ))
-		appointment_medicine_info = cursor.fetchone()
-
-		# appointment_doctor info
-		cursor.execute("SELECT * FROM User where ssn=(%s)", (str(appointment_info[1]), ))
-		appointment_doctor_info = cursor.fetchone()
-
-		# appointment_patient_info
-		cursor.execute("SELECT * FROM User where ssn(%s)", (str(appointment_info[2]), ))
-		appointment_patient_info = cursor.fetchone()
-
-		
-		return_data.extend([str(x) for x in data1[1:]])
+		return_data = getting_all_appointment_info(appointment)
+		return_data.append(set_value)
 		print return_data
 		return render_template('update_appointment.html', data=return_data)
 
+@app.route("/update_appointment/<appointment>", methods=['GET', 'POST'])
+def update_appointment(appointment):
+	if request.method == "POST":
+		cursor = db.cursor()
+
+		symptoms = request.form['symptoms']
+		notes = request.form['notes']
+		medicine_name = request.form['medicine_name']
+		medicine_shape = request.form['medicine_shape']
+		medicine_producer = request.form['medicine_producer']
+		medicine_unit_per_time = request.form['medicine_unit_per_time']
+		medicine_total = request.form['medicine_total']
+
+		# update appointment info
+		cursor.execute("UPDATE Appointment set symptoms=%s, notes=%s where appointment_sn=%s", (symptoms, notes, appointment))
+		db.commit()
+
+		# checking existing medicine
+		cursor.execute("SELECT * from Medicine where medicine_name=%s and shape=%s and producer=%s"
+			, (medicine_name, medicine_shape, medicine_producer))
+		medicine_info = cursor.fetchone()
+		if medicine_info == None:
+			return redirect(url_for('showing_appointment_update_info', appointment=appointment, set_value=1))
+		else:
+			cursor.execute("UPDATE Appointment_medicine set medicine_name=%s, shape=%s, producer=%s where appointment_sn=%s"
+				, (medicine_name, medicine_shape, medicine_producer, appointment))
+			db.commit()
+		return_data = getting_all_appointment_info(appointment)
+		return render_template('showing_appointment.html', data=return_data)
 
 def add_appointment_to_database(cursor, patient_ssn, symptoms):
 	# finding min appointment number 
@@ -106,3 +113,17 @@ def add_appointment_to_database(cursor, patient_ssn, symptoms):
 		,(str(current_appointment_number), patient_ssn, symptoms, today.strftime("%m-%d-%Y")))
 	db.commit()
 	return current_appointment_number
+
+def getting_all_appointment_info(appointment):
+	cursor = db.cursor()
+	# appointment information
+	cursor.execute("SELECT * from Appointment where appointment_sn=(%s)", (appointment, ))
+	appointment_info = cursor.fetchone()
+
+	# medicine of appointment information
+	cursor.execute("SELECT * from Appointment_medicine where appointment_sn=(%s)", (appointment, ))
+	appointment_medicine_info = cursor.fetchone()
+
+	return_data = [str(x) for x in appointment_info]
+	return_data.extend([str(x) for x in appointment_medicine_info[1:]])
+	return return_data

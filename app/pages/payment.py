@@ -13,7 +13,7 @@ def finding_payment():
 	if request.method == "POST":
 		cursor = db.cursor()
 		payment_id = request.form['text']
-		cursor.execute("SELECT * from Appointment where appointment_sn=" + "'" + payment_id + "'")
+		cursor.execute("SELECT * from Payment where appointment_sn=" + "'" + payment_id + "'")
 		data = cursor.fetchone()
 		if data is None:
 			return "huhu"

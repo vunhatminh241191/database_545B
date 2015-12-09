@@ -2,11 +2,25 @@
 
 {% block content %}
 
-<p> Please input Appointment's Number that you want to look at </p>
-<form action="update_appointment" method="POST">
-		<input type="text" name="Symptoms", value="{{data[1]}}">
-		<input type="submit" name="my-form" value="Update">
+<p> Please input new information </p>
+<form action="{{url_for('update_appointment', appointment=data[0], set_value=0)}}" method="POST">
+	<p> Appointment's Number: {{data[0]}} </p>
+	<p> Appointment's Doctor: {{data[1]}} </p>
+	<p> Appointment's Patient: {{data[2]}} </p>
+	<p> Appointemnt's Date: {{data[4]}} </p>
+	<p> Appointment's Symptoms: <input type="text" name="symptoms", value="{{data[3]}}"> </p>
+	<p> Appointment's Notes: <input type="text" name="notes", value="{{data[5]}}"></p>
+	<p> Appointment Medicine's name: <input type="text" name="medicine_name", value="{{data[6]}}"></p>
+	<p> Appointment Medicine's shape: <input type="text" name="medicine_shape", value="{{data[7]}}"></p>
+	<p> Appointment Medicine's producer: <input type="text" name="medicine_producer", value="{{data[8]}}"></p>
+	<p> Appointment Medicine's unit per time: <input type="text" name="medicine_unit_per_time", value="{{data[9]}}"></p>
+	<p> Appointment Medicine's total: <input type="text" name="medicine_total", value="{{data[10]}}"></p>
+	<input type="submit" name="my-form" value="Update">
 </form>
+
+{% if data[11] == "1" %}
+	<p> This medicine does not exist </p>
+{% endif %}
 
 
 {% endblock %}

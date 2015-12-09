@@ -1,18 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-
-<p> Please input Appointment's Number that you want to look at </p>
-<form action="finding_appointment" method="POST">
-		<input type="text" name="text">
-		<input type="submit" name="my-form" value="Search">
-</form>
-
-{% if not_found %}
-
-	<p> {{not_found}} </p>
-
-{% elif data %}
+{% if data %}
 	<p> Appointment's Number: {{data[0]}} </p>
 	<p> Appointment's Doctor: {{data[1]}} </p>
 	<p> Appointment's Patient: {{data[2]}} </p>
