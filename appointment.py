@@ -134,9 +134,10 @@ class Appointment:
 		new_data.append(ePhone)
 		new_data.append(eBirthdate)
 
-		data=[]
-		data.append(eSsn)
-		data.append(eSymptom)
+		if data :
+			data=[]
+			data.append(eSsn)
+			data.append(eSymptom)
 		bSubmit = Button(fMAInput, text="Submit", command=lambda: self.doMakeNewUser([x.get() for x in new_data], [x.get() for x in data]))
 		bSubmit.grid(columnspan=2, column=0, row=11)
 		return
@@ -149,12 +150,17 @@ class Appointment:
 		now = datetime.datetime.now()
 		userdata.insert(3, str(now.year-int(userdata[9].split('-')[0])))
 		print("INSERT INTO User VALUES ('"+"','".join(userdata)+"', NULL);")
-		cur.execute("INSERT INTO User VALUES ('"+"','".join(userdata)+"', NULL);")
-		cur.execute("INSERT INTO Patient VALUES ('%s');"%userdata[0])
-		conn.commit()
-		self.doMakeAppointment(data)
+		try:
+			cur.execute("INSERT INTO User VALUES ('"+"','".join(userdata)+"', NULL);")
+			cur.execute("INSERT INTO Patient VALUES ('%s');"%userdata[0])
+			conn.commit()
+			conn.close()
+		except:
+			self.msgErr(4)
 
-		conn.close()
+		if data:
+			self.doMakeAppointment(data)
+		tkMessageBox.showinfo("Success", "Success!")
 		return
 
 	def msgErr(self, errcode):
@@ -170,7 +176,7 @@ class Appointment:
 		fSAResult = Frame(self.infoFrame, width=890, height=640)
 		fSAResult.pack(fill=NONE, side=TOP)
 
-		lAid = Label(fSAInput, text="Appointment SSN").pack(fill=BOTH, side=LEFT)
+		lAid = Label(fSAInput, text="Appointment SN").pack(fill=BOTH, side=LEFT)
 		eAid = Entry(fSAInput)
 		eAid.pack(fill=BOTH, side=LEFT)
 		bSearch = Button(fSAInput, text="Search", command=lambda: self.doSearchAppointment(fSAResult, eAid.get())).pack(fill=BOTH, side=LEFT)
@@ -194,7 +200,7 @@ class Appointment:
 					Label(fSAResult, text=data[c], width=20, anchor=W).grid(row=c, column=0)
 					Label(fSAResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
 					c=c+1
-				lastrow=c-1
+				lastrow=c
 
 
 		self.doSearchMedicineByAppointment(fSAResult, aid, lastrow)
@@ -209,7 +215,7 @@ class Appointment:
 			# self.msgErr(1)
 			print("No medicine yet!")
 		else:
-			data=['Medicine Name', 'Shape', 'Producer', 'Functionality', 'Unit Per Time', 'Total Unit']
+			data=['Medicine Name', 'Shape', 'Producer', 'Unit Per Time', 'Total Unit']
 			for row in cur:
 				c=0
 				# remove appointment sn from row
@@ -333,8 +339,9 @@ class Appointment:
 		conn.commit()
 		conn.close()
 
-		# self.doSearchMedicineByAppointment(fSAResult, aid, lastrow)
-		
+
+		tkMessageBox.showinfo("", "Success!")
+		self.clearInfoFrame()		
 		return
 
 	def searchPatient(self):
@@ -412,21 +419,45 @@ class Appointment:
 		fSMResult = Frame(self.infoFrame, width=890, height=640)
 		fSMResult.pack(fill=NONE, side=TOP)
 
-		lName = Label(fSMInput, text="Medicine Name").pack(fill=BOTH, side=LEFT)
+		lName = Label(fSMInput, text="Name").pack(fill=BOTH, side=LEFT)
 		eName = Entry(fSMInput)
 		eName.pack(fill=BOTH, side=LEFT)
-		bSearch = Button(fSMInput, text="Search", command=lambda: self.doSearchMedicine(fSMResult, eName.get())).pack(fill=BOTH, side=LEFT)
+
+		lShape = Label(fSMInput, text="Shape").pack(fill=BOTH, side=LEFT)
+		eShape = Entry(fSMInput)
+		eShape.pack(fill=BOTH, side=LEFT)
+
+		lProducer = Label(fSMInput, text="Producer").pack(fill=BOTH, side=LEFT)
+		eProducer = Entry(fSMInput)
+		eProducer.pack(fill=BOTH, side=LEFT)
+
+		key = []
+		key.append(eName)
+		key.append(eShape)
+		key.append(eProducer)
+
+		bSearch = Button(fSMInput, text="Search", command=lambda: self.doSearchMedicine(fSMResult, [x.get() for x in key])).pack(fill=BOTH, side=LEFT)
 
 		return
 
-	def doSearchMedicine(self, fSAResult, name):
+	def doSearchMedicine(self, fSAResult, key):
+		for widget in fSAResult.winfo_children():
+			widget.destroy()
 		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
 		cur = conn.cursor()
-		print(name)
-		if not name:
+		print(key)
+		keystr = ''	
+		if len(key[0]) is not 0:
+			keystr= keystr+"medicine_name='%s' "%(key[0])
+		if len(key[1]) is not 0:
+			keystr= keystr+"shape='%s' "%(key[1])
+		if len(key[2]) is not 0:
+			keystr= keystr+"producer='%s' "%(key[2])
+
+		if len(keystr) is 0:
 			command = "SELECT * FROM Medicine"
 		else:
-			command = "SELECT * FROM Medicine WHERE medicine_name='%s'"%name
+			command = "SELECT * FROM Medicine WHERE %s"%(keystr)
 		
 		print(command)
 		if not cur.execute(command):
@@ -494,20 +525,23 @@ class Appointment:
 		bMakeAppointment = Button(bottonFrame, text="Make an appointment", width=20, command=self.makeAppointment)
 		bMakeAppointment.grid(row=0, column=0, padx=5, pady=5)
 
+		bMakeNewUser = Button(bottonFrame, text="Create an User", width=20, command=lambda:self.makeNewUser(''))
+		bMakeNewUser.grid(row=1, column=0, padx=5, pady=5)
+
 		bSearchAppointment = Button(bottonFrame, text="Search an appointment", width=20, command=self.searchAppointment)
-		bSearchAppointment.grid(row=1, column=0, padx=5, pady=5)
+		bSearchAppointment.grid(row=2, column=0, padx=5, pady=5)
 
 		bFindDoc = Button(bottonFrame, text="Search a doctor", width=20, command=self.searchDoctor)
-		bFindDoc.grid(row=2, column=0, padx=5, pady=5)
+		bFindDoc.grid(row=3, column=0, padx=5, pady=5)
 
 		bFindPatient = Button(bottonFrame, text="Search a patient", width=20, command=self.searchPatient)
-		bFindPatient.grid(row=3, column=0, padx=5, pady=5)
+		bFindPatient.grid(row=4, column=0, padx=5, pady=5)
 
 		bFindMedicine = Button(bottonFrame, text="Search a medicine", width=20, command=self.searchMedicine)
-		bFindMedicine.grid(row=4, column=0, padx=5, pady=5)
+		bFindMedicine.grid(row=5, column=0, padx=5, pady=5)
 
 		bFindPayment = Button(bottonFrame, text="Search a payment", width=20, command=self.searchPayment)
-		bFindPayment.grid(row=5, column=0, padx=5, pady=5)
+		bFindPayment.grid(row=6, column=0, padx=5, pady=5)
 
 		root.mainloop()
 

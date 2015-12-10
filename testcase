@@ -1,0 +1,243 @@
+Test Cases
+
+@TC-1 Create an user and use this user's ssn to make an appointment. Also search this user to verify creating.
+Create an User
+	SSN: 123456789
+	Birthdate: 1980-1-1
+	Phone Number: 1234567890
+	First Name: Hossam
+	Last Name: Fattah
+	Address: 1900 Commerce St
+	City: Tacoma
+	State: WA
+	ZIP Code: 98402
+	Email: hossamf@uw.edu
+
+Submit
+	it will pop out an message box showing "Success!", if it is the first time to create this user.
+
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM User WHERE ssn=123456789;
+	you can see a new user as above. 
+	SELECT * FROM Patient WHERE ssn=123456789;
+	the user's ssn will also apears in Patient relation.
+
+
+
+@TC-2 Search a patient. Follow @TC-1.
+Search A Patient
+	Patient SSN: 123456789
+
+Submit
+	it will show the information as below
+
+	SSN: 123456789
+	First Name: Hossam
+	Last Name: Fattah
+	Age: 35
+	Email: hossamf@uw.edu
+	Address: 1900 Commerce St
+	City: Tacoma
+	State: WA
+	ZIP Code: 98402
+	Phone Number: 1234567890
+	Birthday: 1980-1-1
+	Addition Info: None
+
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM User WHERE ssn=123456789;
+	you can see a same result as above.
+	SELECT * FROM Patient WHERE ssn=123456789;
+	the user's ssn will also apears in Patient relation.
+
+
+@TC-3 Make an appointment. Follow TC-1
+Make an Appointment
+	SSN: 123456789
+	Symtoms: NOT FEEL GOOD
+
+Submit
+	it will pop out an message box showing "Success! Appointment SN is 1122", if this it the first time to make an appointment
+	*the appointment sn might be different.
+
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM Appointment WHERE appointment_sn=1122;
+	you can see a new appointment with appointment_sn=1122;
+
+
+@TC-4 Search an appointment. Follow TC-3 
+Search an Appointment
+	Appointment SN: 1122
+
+Submit
+	it will show the information as below
+
+	Appointment Number: 1122
+	Doctor SSN: None
+	Patient SSN: 123456789
+	Symtom: NOT FEEL GOOD
+	Date: 2015-12-10
+	Notes:
+
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM Appointment WHERE ssn=1122;
+	you can see a same result as above.
+
+
+@TC-5 Make an appointment with new user.
+Make an Appointment
+	SSN: 999999999
+	Symtoms: NOT FEEL GOOD
+
+Submit
+	it will pop out an message box showing "Not Found", if SSN 999999999 doesn't exist in our database.(You can verify by searching this patient) After clicking "OK", it will show addional input entries and the SSN and Symtom will be filled. Input the following information to create a new user and make an appointment.
+
+	SSN: 999999999
+	Birthdate: 1980-1-1
+	Phone Number: 1111111111
+	Symtoms: NOT FEEL GOOD
+	First Name: Nike
+	Last Name: Adida
+	Address: 1900 Commerce St
+	City: Tacoma
+	State: WA
+	ZIP Code: 98402
+	Email: nike@uw.edu
+
+Submit
+	it will pop out an message box showing "Success! Appointment SN is 1123", if this it the first time to make an appointment.
+	*the appointment sn might be different.
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM Appointment WHERE apointment_sn=1123;
+	you can see a same result as above.
+	SELECT * FROM User WHERE ssn=999999999;
+	you can see the new user.
+	SELECT * FROM Patient WHERE ssn=999999999;
+	the user's ssn will also apears in Patient relation.
+
+
+@TC-6 Delete an appointment, follow TC-5.
+Search an appointment
+	Appointment SN = 1123
+
+Delete
+	it should pop out a message box showing "Success!"
+
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM Appointment WHERE appointment_sn=1123;
+	the appointment will not exist.
+
+
+
+@TC-7 Update an appointment
+Search an appointment
+	Appointment SN:1112
+Submit
+	it will show following information
+
+	Appointment SN: 1112
+	Doctor SSN: 100000005
+	Patient SSN: 100000012
+	Symptom: Headache
+	Date: 2015-03-07
+	Notes: Headache level 4
+	Symtom: Headache level 4, should look at this
+	Medicine Name: Headache Hurt
+	Shape: capsule
+	Producer: J
+	Functionality: cap
+	Unit Per Time: 2
+	Total Unit: 10
+
+Modify, for example, unit per time 2 to 5
+Update
+	it will pop out a message box showing "Success!"
+
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM Appointment WHERE appointment_sn=1112;
+	you will see differences in appointment relation or
+	SELECT * FROM Appointment_medicine WHERE appointment_sn=1112;
+	in appointment_medicine relation.
+
+
+@TC-8 Search a Doctor
+Search a Doctor
+	Doctor SSN: 100000001
+
+Submit
+	SSN: 100000001
+	First Name: Shirley B.
+	Last Name: Lindquist
+	Age: 22
+	Email: ShirleyBLindquist@dayrep.com
+	Address: 2596 Settlers Lane
+	City: New York
+	State: NY
+	ZIP Code: 10016
+	Phone: 9177622342
+	Birthday: 1993-02-16
+	Addition Info: None
+
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM User WHERE ssn=100000001;
+	you will see the information as above.
+	SELECT * FROM Doctor WHERE doctor_ssn=1112;
+	and you can see advance information in Doctor relation.
+
+@TC-9 Search a Payment
+Search a Payment
+	Appointment SN: 1111
+
+Submit
+	Appointment SN: 1111
+	Method: CASH
+	Amount: 180
+	Date: 2015-02-08
+
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM Payment WHERE appointment_sn=1111;
+	you will see the information as above.
+
+
+@TC-10 Search a Medicine
+Search a Medicine
+	Name: Balling B
+	Shape: capsule
+	Producer: A
+
+Search
+	Name: Balling B
+	Shape: capsule
+	Producer: A
+	Functionality: Balling Level 1
+	Quanlity Having: 500
+	Quanlity Using:200
+
+*the searching keys(Name, Shape, Producer) are 'OR' condition. You can input nothing and get all medicine.
+
+MySQL Verification
+	USE FinalProject;
+	SELECT * FROM Medicine WHERE medicine_name='Balling B' and producer='A' and shape='capsule';
+	you will see the information as above.
+
+
+
+
+
+
+
+
+
+
+
+
+
