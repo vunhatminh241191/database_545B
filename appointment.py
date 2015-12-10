@@ -457,11 +457,11 @@ class Appointment:
 		lAsn = Label(fSPInput, text="Appointment SN").pack(fill=BOTH, side=LEFT)
 		eAsn = Entry(fSPInput)
 		eAsn.pack(fill=BOTH, side=LEFT)
-		bSearch = Button(fSPInput, text="Search", command=lambda: self.doSearchPatient(fSPResult, eAsn.get())).pack(fill=BOTH, side=LEFT)
+		bSearch = Button(fSPInput, text="Search", command=lambda: self.doSearchPayment(fSPResult, eAsn.get())).pack(fill=BOTH, side=LEFT)
 		
 		return
 
-	def doSearchPatient(self, fSPResult, data):
+	def doSearchPayment(self, fSPResult, data):
 		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
 		cur = conn.cursor()
 		print(data)
