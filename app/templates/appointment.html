@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<p> Please input Appointment's Number that you want to look at </p>
+<p> Please input <b>Appointment's Number</b> that you want to look at </p>
 <form action="finding_appointment" method="POST">
 		<input type="text" name="text">
 		<input type="submit" name="my-form" value="Search">
@@ -14,8 +14,8 @@
 
 {% elif data %}
 	<p> Appointment's Number: {{data[0]}} </p>
-	<p> Appointment's Doctor: {{data[1]}} </p>
-	<p> Appointment's Patient: {{data[2]}} </p>
+	<p> Appointment Doctor's SSN: {{data[1]}} </p>
+	<p> Appointment Patient's SSN: {{data[2]}} </p>
 	<p> Appointemnt's Date: {{data[4]}} </p>
 	<p> Appointment's Symptoms: {{data[3]}} </p>
 	<p> Appointment's Notes: {{data[5]}} </p>

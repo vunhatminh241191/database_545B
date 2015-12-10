@@ -3,3 +3,4 @@ env/
 app/*.pyc
 app/pages/*.py
 .DS_Store
+app/__init__.pyc
