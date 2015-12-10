@@ -17,7 +17,7 @@ def finding_patient():
 			return render_template('patient.html', not_found="Please input user's email to search")
 		cursor = db.cursor()
 		cursor.execute("SELECT * from User where email=" + "'" + request.form['search_string'] + "'")
-		data = checking_user_account(cursor, list(cursor.fetchone()))
+		data = cursor.fetchone()
 		if data == None:
 			return render_template('patient.html', not_found="The result not found")
 		return render_template('patient.html', data=data)
