@@ -1,5 +1,4 @@
 from flask import Flask
-from flask.ext.mysql import MySQL
 from flask.ext.httpauth import HTTPBasicAuth
 import MySQLdb
 

@@ -82,11 +82,14 @@ def update_appointment(appointment):
 
 		symptoms = request.form['symptoms']
 		notes = request.form['notes']
+
 		if len(request.form) <= 3:
 			# update appointment info
 			cursor.execute("UPDATE Appointment set symptoms=%s, notes=%s where appointment_sn=%s", (symptoms, notes, appointment))
 			db.commit()
 		else:
+			cursor.execute("UPDATE Appointment set symptoms=%s, notes=%s where appointment_sn=%s", (symptoms, notes, appointment))
+			db.commit()
 			medicine_name = request.form['medicine_name']
 			medicine_shape = request.form['medicine_shape']
 			medicine_producer = request.form['medicine_producer']
