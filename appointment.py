@@ -3,7 +3,7 @@ import tkMessageBox
 import pymysql
 import datetime
 
-
+conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
 class Appointment:
 
 	def clearInfoFrame(self):
@@ -12,7 +12,7 @@ class Appointment:
 		return
 
 	def doMakeAppointment(self, data):
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		print("doMakeAppointment")
 		print(data)
@@ -33,7 +33,7 @@ class Appointment:
 			self.msgErr(1)
 			self.makeNewUser(data)
 
-		conn.close()
+		
 		return
 
 	def makeAppointment(self):
@@ -143,7 +143,7 @@ class Appointment:
 		return
 
 	def doMakeNewUser(self, userdata, data):
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		print(data)
 		print(userdata)
@@ -154,7 +154,7 @@ class Appointment:
 			cur.execute("INSERT INTO User VALUES ('"+"','".join(userdata)+"', NULL);")
 			cur.execute("INSERT INTO Patient VALUES ('%s');"%userdata[0])
 			conn.commit()
-			conn.close()
+			
 		except:
 			self.msgErr(4)
 
@@ -184,7 +184,7 @@ class Appointment:
 		return
 
 	def doSearchAppointment(self, fSAResult, aid):
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		print(aid)
 		lasrow=0
@@ -204,11 +204,11 @@ class Appointment:
 
 
 		self.doSearchMedicineByAppointment(fSAResult, aid, lastrow)
-		conn.close()
+		
 		return
 
 	def doSearchMedicineByAppointment(self, fSAResult, aid, lastrow):
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		print(aid)
 		if not cur.execute("SELECT * FROM Appointment_medicine WHERE appointment_sn="+"'"+aid+"'"):
@@ -229,13 +229,13 @@ class Appointment:
 					c=c+1
 		bUpdate = Button(fSAResult, text="Update", anchor=E, command=lambda: self.updateAppointment(fSAResult, aid)).grid(row=12, column=0)
 		bDelete = Button(fSAResult, text="Delete", anchor=W, command=lambda: self.doDelAppointment(aid)).grid(row=12, column=1)
-		conn.close()
+		
 		return
 
 	def doDelAppointment(self, aid):
 		print(aid)
 		self.clearInfoFrame()
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		try:
 			cur.execute("SELECT * FROM Appointment WHERE appointment_sn="+aid)
@@ -247,7 +247,7 @@ class Appointment:
 			if appointment[1] is None:
 				cur.execute("DELETE FROM Appointment WHERE appointment_sn='"+aid+"';")
 			conn.commit()
-			conn.close()
+			
 		except:
 			self.msgErr(4)
 		self.searchAppointment()
@@ -257,7 +257,7 @@ class Appointment:
 		self.clearInfoFrame()
 		fSAResult = Frame(self.infoFrame)
 		fSAResult.pack(fill=NONE, side=TOP)
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		cur1 = conn.cursor()
 		print(aid)
@@ -316,7 +316,7 @@ class Appointment:
 			return
 
 	def doUpdateAppointment(self, aid, oldAppointment, oldAMedicine, data):		
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 
 		print(oldAMedicine)
@@ -337,7 +337,7 @@ class Appointment:
 		conn.commit()
 		cur.execute(AMedicineCommand)
 		conn.commit()
-		conn.close()
+		
 
 
 		tkMessageBox.showinfo("", "Success!")
@@ -359,7 +359,7 @@ class Appointment:
 		return
 
 	def doSearchPatient(self, fSPResult, data):
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		print(data)
 		if not cur.execute("SELECT * FROM Patient WHERE patient_ssn="+"'"+data+"'") or not cur.execute("SELECT * FROM USER WHERE ssn="+"'"+data+"'"):
@@ -375,7 +375,7 @@ class Appointment:
 					Label(fSPResult, text=data[c], width=15, anchor=W).grid(row=c, column=0)
 					Label(fSPResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
 					c=c+1
-		conn.close()
+		
 		return
 
 	def searchDoctor(self):
@@ -393,7 +393,7 @@ class Appointment:
 		return
 
 	def doSearchDoctor(self, fSDResult, data):
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		print(data)
 		if not cur.execute("SELECT * FROM Doctor WHERE doctor_ssn="+"'"+data+"'") or not cur.execute("SELECT * FROM USER WHERE ssn="+"'"+data+"'"):
@@ -409,7 +409,7 @@ class Appointment:
 					Label(fSDResult, text=data[c], width=15, anchor=W).grid(row=c, column=0)
 					Label(fSDResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
 					c=c+1
-		conn.close()
+		
 		return
 
 	def searchMedicine(self):
@@ -443,7 +443,7 @@ class Appointment:
 	def doSearchMedicine(self, fSAResult, key):
 		for widget in fSAResult.winfo_children():
 			widget.destroy()
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		print(key)
 		keystr = ''	
@@ -475,7 +475,7 @@ class Appointment:
 					Label(fSAResult, text=str(col), width=colWid[c], anchor=W).grid(row=r, column=c)
 					c=c+1
 				r=r+1
-		conn.close()
+		
 		return
 
 	def searchPayment(self):
@@ -493,7 +493,7 @@ class Appointment:
 		return
 
 	def doSearchPayment(self, fSPResult, data):
-		conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='FinalProject')
+		
 		cur = conn.cursor()
 		print(data)
 		if not cur.execute("SELECT * FROM Appointment WHERE appointment_sn="+"'"+data+"'") or not cur.execute("SELECT * FROM Payment WHERE appointment_sn="+"'"+data+"'"):
@@ -509,7 +509,7 @@ class Appointment:
 					Label(fSPResult, text=data[c], width=15, anchor=W).grid(row=c, column=0)
 					Label(fSPResult, text=str(col), width=30, anchor=W).grid(row=c, column=1)
 					c=c+1
-		conn.close()
+		
 		return
 
 

@@ -20,6 +20,11 @@ def finding_patient():
 		data = cursor.fetchone()
 		if data == None:
 			return render_template('patient.html', not_found="The result not found")
+		else:
+			cursor.execute("SELECT * from Patient where patient_ssn=" + "'" + str(data[0]) + "'")
+			data1 = cursor.fetchone()
+			if data1 == None:
+				return render_template('patient.html', not_found="The result not found")
 		return render_template('patient.html', data=data)
 	if request.method == 'GET':
 		return render_template('patient.html')
