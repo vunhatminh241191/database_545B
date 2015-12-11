@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<p> Please input <b>Appointment's Number</b> that you want to look at </p>
+<form action="delete_appointment" method="POST">
+		<input type="text" name="appointment_number">
+		<input type="submit" name="my-form" value="Delete">
+</form>
+
+{% if not_found %}
+
+	<p> {{not_found}} </p>
+
+{% elif data %}
+	<p> {{data}} </p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<p> Please input <b>Patient's email</b> that you want to look at </p>
+<form action="finding_patient" method="POST">
+	<input type="text" name="search_string">
+	<input type="submit" name="my-form" value="Search">
+</form>
+
+{% if not_found %}
+
+	<p> {{not_found}} </p>
+
+{% elif data %}
+	<p> Patient's first name: {{data[1]}} </p>
+	<p> Patient's last name: {{data[2]}} </p>
+	<p> Patient's email: {{data[4]}}
+	<p> Patient's age: {{data[3]}} </p>
+	<p> Patient's phone number: {{data[9]}} </p>
+	<p> Patient's birth_date: {{data[10]}} </p>
+	<p> Patient's address: {{data[5]}} {{data[6]}} {{data[7]}} {{data[8]}} </p> 
+{% endif %}
+
+{% endblock %}

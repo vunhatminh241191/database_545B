@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{% if data %}
+	<p> Appointment's Number: {{data[0]}} </p>
+	<p> Appointment's Doctor: {{data[1]}} </p>
+	<p> Appointment's Patient: {{data[2]}} </p>
+	<p> Appointemnt's Date: {{data[4]}} </p>
+	<p> Appointment's Symptoms: {{data[3]}} </p>
+	<p> Appointment's Notes: {{data[5]}} </p>
+	{% if data|length >= 7%}
+		<p> Appointment Medicine's name: {{data[6]}}</p>
+		<p> Appointment Medicine's shape: {{data[7]}}</p>
+		<p> Appointment Medicine's producer: {{data[8]}}</p>
+		<p> Appointment Medicine's unit per time: {{data[9]}}</p>
+		<p> Appointment Medicine's total: {{data[10]}}</p>
+	{% endif %}
+
+	<p> <a href="{{ url_for('showing_appointment_update_info', appointment=data[0], set_value=0) }}"><button>Update Appointmnet</button></a></p>
+{% endif %}
+
+{% endblock %}

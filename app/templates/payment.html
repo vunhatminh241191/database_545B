@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<p> Please tell us which <b>Appointment's Number</b> you want to look at </p>
+<form action="finding_payment" method="POST">
+		<input type="text" name="text">
+		<input type="submit" name="my-form" value="Send">
+</form>
+
+{% if data %}
+	<p> Appointment's number: {{data[0]}} </p>
+	<p> Appointment's method: {{data[1]}} </p>
+	<p> Appointment's total money: {{data[2]}} </p>
+	<p> Appointment's paying date: {{data[3]}} </p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<p> You never go to our this hospital, please register the new account </p>
+<form action="adding_account" method="POST">
+	<p>SSN: <input type="text" name="patient_ssn"></p>
+	<p>First name: <input type="text" name="patient_first_name"></p>
+	<p>Last name: <input type="text" name="patient_last_name"></p>
+	<p>Age: <input type="text" name="patient_age"></p>
+	<p>Email: <input type="text" name="patient_email"></p>
+	<p>Address: <input type="text" name="patient_address"></p>
+	<p>City: <input type="text" name="patient_city"></p>
+	<p>State: <input type="text" name="patient_state"></p>
+	<p>Zipcode: <input type="text" name="patient_zipcode"></p>
+	<p>Phone number: <input type="text" name="patient_phone_number"></p>
+	<p>Birth date: <input type="text" name="patient_date_of_birth"></p>
+	<input type="submit" name="my-form" value="Adding new account">
+</form>
+
+{% if data_return %}
+	{{data_return}}
+{% endif %}
+{% endblock %}

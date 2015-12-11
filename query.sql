@@ -1,5 +1,3 @@
-DROP DATABASE FinalProject;
-Create Database FinalProject;
 USE FinalProject;
 
 CREATE TABLE User (
@@ -13,7 +11,7 @@ CREATE TABLE User (
     state               Char(8)         NOT NULL,
     zip_code            Integer         NOT NULL,
     phone               Char(16)        NOT NULL,
-    date_of_birth       Date            NOT NULL,
+    date_of_birth       Char(16)          NOT NULL,
     additional_info     Char(64)        NULL,
     PRIMARY KEY (ssn)
     ); 
@@ -40,11 +38,11 @@ CREATE TABLE Patient (
 
 CREATE TABLE Appointment (
     appointment_sn      Char(8)         NOT NULL,
-    doctor_ssn          Integer         NOT NULL,
+    doctor_ssn          Integer         NULL,
     patient_ssn         Integer         NOT NULL,
     symptoms            Char(64)        NOT NULL,
     appointment_date    Char(10)        NOT NULL,
-    notes               Char(128)       NOT NULL,
+    notes               Char(128)       NULL,
     PRIMARY KEY (appointment_sn),
     FOREIGN KEY (patient_ssn)   REFERENCES Patient(patient_ssn),
     FOREIGN KEY (doctor_ssn)    REFERENCES Doctor(doctor_ssn)
@@ -171,4 +169,13 @@ INSERT INTO Appointment_medicine VALUES('1118', 'Headache Assistant', 'Oval', 'Z
 INSERT INTO Appointment_medicine VALUES('1119', 'Balling B', 'capsule', 'A', 2, 8);
 INSERT INTO Appointment_medicine VALUES('1120', 'Fever B', 'capsule', 'A', 2, 1);
 
-
+INSERT INTO Payment VALUES ('1111', 'CASH', 180, '2015-02-08');
+INSERT INTO Payment VALUES ('1112', 'DEBIT', 250, '2015-03-07');
+INSERT INTO Payment VALUES ('1113', 'CREDIT', 100, '2015-04-08');
+INSERT INTO Payment VALUES ('1114', 'CASH', 80, '2015-05-18');
+INSERT INTO Payment VALUES ('1115', 'CASH', 60, '2015-06-20');
+INSERT INTO Payment VALUES ('1116', 'CREDIT', 400, '2015-07-03');
+INSERT INTO Payment VALUES ('1117', 'CREDIT', 250, '2015-07-20');
+INSERT INTO Payment VALUES ('1118', 'DEBIT', 50, '2015-08-12');
+INSERT INTO Payment VALUES ('1119', 'CREDIT', 90, '2015-09-22');
+INSERT INTO Payment VALUES ('1120', 'CASH', 70, '2015-10-15');
