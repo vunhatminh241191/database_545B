@@ -1,3 +1,5 @@
+DROP DATABASE FinalProject;
+Create Database FinalProject;
 USE FinalProject;
 
 CREATE TABLE User (
